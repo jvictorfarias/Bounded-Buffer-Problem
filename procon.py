@@ -113,8 +113,11 @@ if __name__ == '__main__':
     for j in range (int(sys.argv[3])):
         Process(target = consumidor, args=(lock, empty, full, buffer, a_consumir, BUFFER_SIZE, j, timeout)).start()
     
-
-
+    while(time.time() < timeout):
+        pass
+    else:
+        exit()
+    
 
 
 
