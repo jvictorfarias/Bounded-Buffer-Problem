@@ -64,8 +64,7 @@ def consumidor(lock, empty, full, buffer, a_consumir, BUFFER_SIZE, numConsumidor
 
 if __name__ == '__main__': 
     
-    BUFFER_SIZE = 5
-    mainLock = Lock()                           #  Tamanho do buffer
+    BUFFER_SIZE = 5                             #  Tamanho do buffer
     buffer = Array('i', BUFFER_SIZE)            #  Nosso buffer limitado inicializado
     lock = Lock()                               #  Lock mutex
     empty = Semaphore(BUFFER_SIZE)              #  Semaforo que guarda a quantidade de posições livres
