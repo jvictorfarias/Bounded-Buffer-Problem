@@ -5,13 +5,29 @@ from multiprocessing import Process, Lock, Semaphore, Array, Value
 
 
 def produtor(lock, empty, full, buffer, a_produzir, BUFFER_SIZE, numProdutor, timeout):
-    while(True and time.time() < timeout):
-
+    while(True):
         #  Verificando se tem posições livre no buffer
-        empty.acquire()
+        #  Algoritmo de espera ocupada, que ao invés de bloquear o processo, faz a verificação de acesso e de TIMEOUT
+        while(True):
+            if( not empty.acquire(0) and time.time() < timeout):
+                continue
+            elif(time.time() > timeout):
+                return()
+            else:
+                break
+
 
         #  Se possível, o mutex é iniciado e entra na região crítica(Se ela estiver livre)
-        lock.acquire()
+        #  Algoritmo de espera ocupada, que ao invés de bloquear o processo, faz a verificação de acesso e de TIMEOUT
+        while(True):
+            if( not lock.acquire(0) and time.time() < timeout):
+                continue
+            elif(time.time() > timeout):
+                return()
+            else:
+                break
+
+        
         print 'Produtor %d entrando na região crítica.' % (numProdutor)
 
         #  Produzindo ...
@@ -31,16 +47,32 @@ def produtor(lock, empty, full, buffer, a_produzir, BUFFER_SIZE, numProdutor, ti
         sono = random.randint(0,10)
         print 'Produtor %d dormindo por %d' % (numProdutor, sono)
         time.sleep(sono)
-    return
+
 def consumidor(lock, empty, full, buffer, a_consumir, BUFFER_SIZE, numConsumidor, timeout):
-    while(True and time.time() < timeout):
+    while(True):
 
         #  Verificando se tem posições a serem consumidas no buffer
-        full.acquire()
+        #  Algoritmo de espera ocupada, que ao invés de bloquear o processo, faz a verificação de acesso e de TIMEOUT
+        while(True):
+            if( not full.acquire(0) and time.time() < timeout):
+                continue
+            elif(time.time() > timeout):
+                return()
+            else:
+                break
+
        
         
         #  Se possível, o mutex é iniciado e entra na região crítica
-        lock.acquire()
+        #  Algoritmo de espera ocupada, que ao invés de bloquear o processo, faz a verificação de acesso e de TIMEOUT
+        while(True):
+            if( not lock.acquire(0) and time.time() < timeout):
+                continue
+            elif(time.time() > timeout):
+                return()
+            else:
+                break
+
         print 'Consumidor %d entrando na região crítica.' % (numConsumidor)
 
         #  Consumindo ...
@@ -59,7 +91,6 @@ def consumidor(lock, empty, full, buffer, a_consumir, BUFFER_SIZE, numConsumidor
         sono = random.randint(0,10)
         print 'Consumidor %d dormindo por %d segundos.' % (numConsumidor, sono)
         time.sleep(sono)
-    return
 
 
 if __name__ == '__main__': 
@@ -74,16 +105,17 @@ if __name__ == '__main__':
     timeout = time.time() + int(sys.argv[1])    #  Tempo que o algoritmo irá rodar
     produtores = []                             #  Lista de inicialização dos produtores
     consumidores = []                           #  Lista de inicialização dos consumidores
-    
-    time.sleep(1)
 
     #  Iniciando os produtores
     for i in range (int(sys.argv[2])):
-        produtores.append(Process(target = produtor, args=(lock, empty, full, buffer, a_produzir, BUFFER_SIZE, i, timeout)).start())
+        Process(target = produtor, args=(lock, empty, full, buffer, a_produzir, BUFFER_SIZE, i, timeout)).start()
     #  Iniciando os consumidores
     for j in range (int(sys.argv[3])):
-        consumidores.append(Process(target = consumidor, args=(lock, empty, full, buffer, a_consumir, BUFFER_SIZE, j, timeout)).start())
+        Process(target = consumidor, args=(lock, empty, full, buffer, a_consumir, BUFFER_SIZE, j, timeout)).start()
     
+
+
+
 
 
 
