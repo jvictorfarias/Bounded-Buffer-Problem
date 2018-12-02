@@ -1,6 +1,7 @@
 **Trabalho de SO para a implementação do problema produtor vs. consumidor**
-Aluno: Joao Victor Oliveira Farias
-Matrícula: 418082
+
+Aluno: Joao Victor Oliveira Farias      
+Matrícula: 418082     
 Curso: Redes de Computadores
 
 ---
